@@ -8,6 +8,13 @@ export const createJWT = (user) => {
 }
 
 export const protect = (req, res, next) => {
+
+    if (req.originalUrl === '/api/signin') {
+        console.log('next called')
+        next()
+        return
+    }
+
     const bearer = req.headers.authorization
 
     const unauth_res = {
