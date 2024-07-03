@@ -1,41 +1,70 @@
-import {Router} from 'express'
-import { body, validationResult } from 'express-validator'
-import { createProduct } from './handlers/product'
+import { Router } from 'express'
+import { body } from 'express-validator'
+import { createProduct, updateProduct } from './handlers/product'
+import { createUpdate } from './handlers/product-update'
+import {
+    handleInputErrors,
+    checkProductExists,
+    checkUserExists
+} from './modules/middleware'
 
 const router = Router()
-
+const chainStringValidation = (property) => body(property).trim().notEmpty()
 /* ===============
     PRODUCT
 =============== */
 
 router.get('/products', (req, res) => {
-    res.json({message: "Product"})
+    res.json({ message: 'Product' })
 })
 
 router.get('/products/:id', (req, res) => {})
 
-router.post('/products', [body("name").notEmpty().isString(), body("userId").notEmpty().isString()], createProduct)
+router.post(
+    '/products',
+    chainStringValidation('name'),
+    handleInputErrors,
+    createProduct
+)
 
-router.put('/products/:id', body("name").notEmpty() .isString(), (req, res) => {
-    const errors = validationResult(req)
-    
-    if (!errors.isEmpty()) {
-        res.status(400)
-        res.json({errors: errors.array()})
-    }
-})
+router.put(
+    '/products/:id',
+
+    chainStringValidation('name'),
+    handleInputErrors,
+    updateProduct
+)
 
 router.delete('/products/:id', (req, res) => {})
 
 /* ===============
     UPDATES
 =============== */
+
 router.get('/updates', (req, res) => {
-    res.json({message: "Updates"})
+    res.json({ message: 'Updates' })
 })
+
 router.get('/updates/:id', (req, res) => {})
-router.post('/updates', (req, res) => {})
-router.put('/updates/:id', (req, res) => {})
+
+router.post(
+    '/updates',
+    [
+        chainStringValidation('body'),
+        chainStringValidation('title'),
+        chainStringValidation('postId').custom(checkProductExists)
+    ],
+    handleInputErrors,
+    createUpdate
+)
+
+router.put('/updates/:id', [
+    body('title').optional(),
+    body('body').optional(),
+    body('version').optional(),
+    body('asset').optional(),
+    body('status').isIn(['IN_PROGRESS', 'LIVE', 'DEPRECATED', 'ARCHIVED'])
+])
 router.delete('/updates/:id', (req, res) => {})
 
 /* ===============
@@ -43,11 +72,22 @@ router.delete('/updates/:id', (req, res) => {})
 =============== */
 
 router.get('/updatepoints', (req, res) => {
-    res.json({message: "Update point"})
+    res.json({ message: 'Update point' })
 })
 router.get('/updatepoints/:id', (req, res) => {})
-router.post('/updatepoints', (req, res) => {})
-router.put('/updatepoints/:id', (req, res) => {})
+router.post(
+    '/updatepoints',
+    [
+        chainStringValidation('name'),
+        chainStringValidation('description'),
+        body('updateId').exists().isString()
+    ],
+    (req, res) => {}
+)
+router.put('/updatepoints/:id', [
+    body('name').optional().trim().notEmpty(),
+    body('description').optional().trim().notEmpty()
+])
 router.delete('/updatepoints/:id', (req, res) => {})
 
 export default router

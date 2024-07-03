@@ -10,7 +10,6 @@ export const createJWT = (user) => {
 export const protect = (req, res, next) => {
 
     if (req.originalUrl === '/api/signin') {
-        console.log('next called')
         next()
         return
     }
