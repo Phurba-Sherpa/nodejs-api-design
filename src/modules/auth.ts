@@ -46,4 +46,4 @@ export const protect = (req, res, next) => {
 // ** Password compare and hasing
 export const comparePassword = (plainTextPassword, hashedPassword) => bycript.compare(plainTextPassword, hashedPassword)
 
-export const hashPassword = (plainTextPassword) => bycript.hash(plainTextPassword, process.env.SALT_ROUND)
+export const hashPassword = (plainTextPassword) => bycript.hash(plainTextPassword, +process.env.SALT_ROUND)

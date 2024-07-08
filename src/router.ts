@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { body } from 'express-validator'
-import { createProduct, updateProduct } from './handlers/product'
+import { createProduct, deleteProduct, getProductById, getProducts, updateProduct } from './handlers/product'
 import { createUpdate } from './handlers/product-update'
 import {
     handleInputErrors,
@@ -14,11 +14,9 @@ const chainStringValidation = (property) => body(property).trim().notEmpty()
     PRODUCT
 =============== */
 
-router.get('/products', (req, res) => {
-    res.json({ message: 'Product' })
-})
+router.get('/products', getProducts)
 
-router.get('/products/:id', (req, res) => {})
+router.get('/products/:id', getProductById)
 
 router.post(
     '/products',
@@ -35,7 +33,7 @@ router.put(
     updateProduct
 )
 
-router.delete('/products/:id', (req, res) => {})
+router.delete('/products/:id', deleteProduct)
 
 /* ===============
     UPDATES

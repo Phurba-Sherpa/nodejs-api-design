@@ -28,6 +28,7 @@ model Product {
   User User @relation(fields: [UserId], references: [UserId])
   UserId String
   Updates Update[]
+  @@unique([ProductId, UserId])
 }
 
 enum UPDATE_STATUS {
